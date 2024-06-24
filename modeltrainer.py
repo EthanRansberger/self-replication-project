@@ -1,4 +1,7 @@
 from transformers import GPT2LMHeadModel, GPT2Tokenizer, Trainer, TrainingArguments
+import torch
+from torch.utils.data import DataLoader
+
 
 def train_model(texts, model_name='gpt2'):
     # Initialize tokenizer and model

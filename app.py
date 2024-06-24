@@ -1,9 +1,21 @@
 import pdfread as pdfread
 import modeltrainer as modeltrainer
 import textgenerator as textgenerator
+from dataset import PandasDataset  # Import the dataset module
+import pandas as pd
 
 
+from torch.utils.data import Dataset
 
+class PandasDataset(Dataset):
+    def __init__(self, dataframe):
+        self.dataframe = dataframe
+
+    def __len__(self):
+        return len(self.dataframe)
+
+    def __getitem__(self, index):
+        return self.dataframe.iloc[index]
 
 
 def main(pdf_paths, prompt):
@@ -16,6 +28,11 @@ def main(pdf_paths, prompt):
     cleaned_texts = [pdfread.clean_text(text) for text in split_texts]
     print(cleaned_texts)
 
+     # Convert the cleaned texts to a pandas DataFrame
+    df = pd.DataFrame(cleaned_texts, columns=['text'])
+
+    # Create a PandasDataset instance
+    dataset = PandasDataset(df)
     
     # Step 3: Train the language model
     model, tokenizer = modeltrainer.train_model(cleaned_texts)
