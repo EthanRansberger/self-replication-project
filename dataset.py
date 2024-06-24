@@ -1,4 +1,3 @@
-# dataset.py
 import pandas as pd
 from torch.utils.data import Dataset
 
@@ -13,7 +12,22 @@ class PandasDataset(Dataset):
 
     def __getitem__(self, index):
         text = self.dataframe.iloc[index]['text']
-        inputs = self.tokenizer(text, return_tensors='pt', max_length=self.max_length, truncation=True, padding='max_length')
+
+        # Tokenize text and handle padding/truncation
+        inputs = self.tokenizer(
+            text,
+            return_tensors='pt',
+            max_length=self.max_length,
+            truncation=True,
+            padding='max_length'
+        )
+
         input_ids = inputs['input_ids'].squeeze()
         attention_mask = inputs['attention_mask'].squeeze()
-        return {'input_ids': input_ids, 'attention_mask': attention_mask}
+        labels = input_ids.clone()  # Labels are the same as input_ids for language modeling
+
+        return {
+            'input_ids': input_ids,
+            'attention_mask': attention_mask,
+            'labels': labels
+        }

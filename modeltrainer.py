@@ -9,9 +9,6 @@ def train_model(dataset, model_name='gpt2'):
 
     model = GPT2LMHeadModel.from_pretrained(model_name)
 
-    # Create a DataLoader from the dataset
-    dataloader = DataLoader(dataset, batch_size=4, shuffle=True)
-
     # Define training arguments
     training_args = TrainingArguments(
         output_dir='./results',
