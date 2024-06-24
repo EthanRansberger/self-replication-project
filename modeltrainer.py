@@ -1,4 +1,3 @@
-# modeltrainer.py
 from transformers import GPT2LMHeadModel, GPT2Tokenizer, Trainer, TrainingArguments
 from torch.utils.data import DataLoader
 
