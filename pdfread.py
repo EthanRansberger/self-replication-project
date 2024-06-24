@@ -15,3 +15,11 @@ def clean_text(text):
     text = re.sub(r'[^\w\s]', '', text)  # Remove punctuation
     tokens = word_tokenize(text.lower())  # Tokenize and convert to lowercase
     return ' '.join(tokens)
+
+
+def split_text_by_context(texts, context_split_regex):
+    split_texts = []
+    for text in texts:
+        sections = re.split(context_split_regex, text)
+        split_texts.extend(sections)
+    return split_texts
