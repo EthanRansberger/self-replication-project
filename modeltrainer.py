@@ -1,22 +1,12 @@
 from transformers import GPT2LMHeadModel, GPT2Tokenizer, Trainer, TrainingArguments
-import torch
 from torch.utils.data import DataLoader
 
-
-def train_model(texts, model_name='gpt2'):
+def train_model(dataset, model_name='gpt2'):
     # Initialize tokenizer and model
     tokenizer = GPT2Tokenizer.from_pretrained(model_name)
-    tokenizer.pad_token = tokenizer.eos_token  # Set pad_token to eos_token or another suitable token
-    
-    model = GPT2LMHeadModel.from_pretrained(model_name)
+    tokenizer.pad_token = tokenizer.eos_token  # Ensure the pad_token is set
 
-    # Tokenize and prepare dataset
-    inputs = tokenizer(texts, return_tensors='pt', max_length=512, truncation=True, padding=True)
-    print(inputs)  # Add this line to check the contents of inputs just before trainer.train()
-    print(len(inputs))
-    # Ensure all necessary keys are present in inputs
-    if 'input_ids' not in inputs:
-        raise ValueError("Missing 'input_ids' in tokenizer outputs.")
+    model = GPT2LMHeadModel.from_pretrained(model_name)
 
     # Define training arguments
     training_args = TrainingArguments(
@@ -27,17 +17,11 @@ def train_model(texts, model_name='gpt2'):
         save_total_limit=2,
     )
 
-    # Ensure all required keys are present in the inputs
-    train_dataset = {}
-    for key in ['input_ids', 'attention_mask', 'token_type_ids']:
-        if key in inputs:
-            train_dataset[key] = inputs[key]
-
     # Create Trainer instance
     trainer = Trainer(
         model=model,
         args=training_args,
-        train_dataset=train_dataset,
+        train_dataset=dataset,
     )
 
     # Train the model
