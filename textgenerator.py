@@ -1,4 +1,4 @@
-from transformers import GPT2LMHeadModel, GPT2Tokenizer, Trainer, TrainingArguments
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
 def generate_text(model, tokenizer, prompt, max_length=500):
     inputs = tokenizer.encode(prompt, return_tensors='pt')
