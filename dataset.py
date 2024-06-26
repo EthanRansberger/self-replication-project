@@ -1,5 +1,6 @@
 import pandas as pd
 from torch.utils.data import Dataset
+from transformers import GPT2Tokenizer
 
 class PandasDataset(Dataset):
     def __init__(self, dataframe, tokenizer, max_length=512):

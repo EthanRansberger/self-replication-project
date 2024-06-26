@@ -1,6 +1,12 @@
+import os
 import fitz  # PyMuPDF
 import re
 from nltk.tokenize import word_tokenize
+
+def get_pdf_paths(folder_path):
+    """Returns a list of all PDF file paths in the given folder."""
+    pdf_paths = [os.path.join(folder_path, file) for file in os.listdir(folder_path) if file.endswith('.pdf')]
+    return pdf_paths
 
 def extract_text_from_pdfs(pdf_paths):
     texts = []
