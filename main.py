@@ -1,3 +1,5 @@
+# main.py
+
 import os
 import pdfread
 import modeltrainer
@@ -7,10 +9,15 @@ import pandas as pd
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
 import utils
 import nltk
+from errorhandling import handle_error  # Import the error handling decorator
 
 # Download NLTK data
 nltk.download('punkt')
 
+# Import the error handling decorator
+from errorhandling import handle_error
+
+@handle_error  # Apply error handling to the main function
 def main(folder_path, dataset_path, context_split_regex):
     # Step 1: Extract text from PDFs
     pdf_paths = pdfread.get_pdf_paths(folder_path)
