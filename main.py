@@ -1,3 +1,5 @@
+# main.py
+
 import os
 import pdfread
 import modeltrainer
@@ -7,9 +9,15 @@ import pandas as pd
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
 import utils
 import nltk
+from errorhandling import handle_error  # Import the error handling decorator
 
+# Download NLTK data
 nltk.download('punkt')
 
+# Import the error handling decorator
+from errorhandling import handle_error
+
+@handle_error  # Apply error handling to the main function
 def main(folder_path, dataset_path, context_split_regex):
     # Step 1: Extract text from PDFs
     pdf_paths = pdfread.get_pdf_paths(folder_path)
@@ -24,17 +32,14 @@ def main(folder_path, dataset_path, context_split_regex):
         try:
             df = utils.load_dataset(dataset_path)
             df = utils.filter_empty_entries(df)
-            df = utils.validate_entries(df)
         except pd.errors.ParserError:
             print(f"Error parsing {dataset_path}. Initializing new dataset.")
             df = pd.DataFrame(split_texts, columns=['text'])
             df = utils.filter_empty_entries(df)
-            df = utils.validate_entries(df)
             utils.save_dataset(df, dataset_path)
     else:
         df = pd.DataFrame(split_texts, columns=['text'])
         df = utils.filter_empty_entries(df)
-        df = utils.validate_entries(df)
         utils.save_dataset(df, dataset_path)
 
     # Initialize tokenizer
@@ -59,7 +64,6 @@ def main(folder_path, dataset_path, context_split_regex):
         # Append new information to the dataset
         df = utils.append_to_dataset(df, user_input)
         df = utils.filter_empty_entries(df)
-        df = utils.validate_entries(df)
         utils.save_dataset(df, dataset_path)
 
         # Generate and print response
