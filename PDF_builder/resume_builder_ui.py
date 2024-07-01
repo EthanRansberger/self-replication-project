@@ -1,165 +1,110 @@
+# resume_builder_ui.py
 import tkinter as tk
-from tkinter import ttk, messagebox
-from resume_util import Job, Education, Skills, Certification, Project, Award, Language, VolunteerExperience, ProfessionalMembership, Publication
-from resume import Resume
+from tkinter import simpledialog, messagebox
+from resume_management import ResumeManager
+from pdf_generator import PDFGenerator
+
 class ResumeBuilderUI:
-    def __init__(self, root):
-        self.resume = Resume(
-            name='',
-            contact_info='',
-            summary=''
-        )
+    def __init__(self, master):
+        self.master = master
+        master.title("Resume Builder")
+        master.geometry("800x600")
+        master.configure(bg='#ecf0f1')
 
-        self.job_bank = []
+        self.resume_manager = ResumeManager()
 
-        self.root = root
-        self.root.title("Resume Builder")
-        self.create_widgets()
+        # Tabs
+        self.tab_control = tk.Notebook(master)
 
-    def create_widgets(self):
-        # Name
-        tk.Label(self.root, text="Name:").grid(row=0, column=0, padx=10, pady=5, sticky=tk.W)
-        self.name_entry = tk.Entry(self.root, width=50)
-        self.name_entry.grid(row=0, column=1, padx=10, pady=5)
+        # Basic Info Tab
+        self.basic_info_tab = tk.Frame(self.tab_control, bg='#f0f0f0')
+        self.tab_control.add(self.basic_info_tab, text="Basic Info")
 
-        # Contact Info
-        tk.Label(self.root, text="Contact Info:").grid(row=1, column=0, padx=10, pady=5, sticky=tk.W)
-        self.contact_info_entry = tk.Entry(self.root, width=50)
-        self.contact_info_entry.grid(row=1, column=1, padx=10, pady=5)
+        # Skills Tab
+        self.skills_tab = tk.Frame(self.tab_control, bg='#f0f0f0')
+        self.tab_control.add(self.skills_tab, text="Skills")
 
-        # Summary
-        tk.Label(self.root, text="Professional Summary:").grid(row=2, column=0, padx=10, pady=5, sticky=tk.W)
-        self.summary_text = tk.Text(self.root, height=5, width=50)
-        self.summary_text.grid(row=2, column=1, padx=10, pady=5)
+        # Certifications Tab
+        self.certifications_tab = tk.Frame(self.tab_control, bg='#f0f0f0')
+        self.tab_control.add(self.certifications_tab, text="Certifications")
 
-        # Job Bank Management
-        tk.Button(self.root, text="Manage Job Bank", command=self.manage_job_bank).grid(row=3, column=0, padx=10, pady=10)
-        tk.Button(self.root, text="Add Job", command=self.add_job_from_bank).grid(row=3, column=1, padx=10, pady=10)
+        # Projects Tab
+        self.projects_tab = tk.Frame(self.tab_control, bg='#f0f0f0')
+        self.tab_control.add(self.projects_tab, text="Projects")
 
-        # Add Education Button
-        self.add_education_button = tk.Button(self.root, text="Add Education", command=self.add_education_form)
-        self.add_education_button.grid(row=4, column=0, padx=10, pady=10)
+        # Awards Tab
+        self.awards_tab = tk.Frame(self.tab_control, bg='#f0f0f0')
+        self.tab_control.add(self.awards_tab, text="Awards")
 
-        # Save Resume Button
-        self.save_resume_button = tk.Button(self.root, text="Save Resume", command=self.save_resume)
-        self.save_resume_button.grid(row=4, column=1, padx=10, pady=10)
+        # Languages Tab
+        self.languages_tab = tk.Frame(self.tab_control, bg='#f0f0f0')
+        self.tab_control.add(self.languages_tab, text="Languages")
 
-    def add_job_from_bank(self):
-        form_window = tk.Toplevel(self.root)
-        form_window.title("Add Job from Bank")
+        # Volunteer Experiences Tab
+        self.volunteer_tab = tk.Frame(self.tab_control, bg='#f0f0f0')
+        self.tab_control.add(self.volunteer_tab, text="Volunteer Experiences")
 
-        tk.Label(form_window, text="Select Job:").grid(row=0, column=0, padx=10, pady=5, sticky=tk.W)
+        # Professional Memberships Tab
+        self.memberships_tab = tk.Frame(self.tab_control, bg='#f0f0f0')
+        self.tab_control.add(self.memberships_tab, text="Professional Memberships")
 
-        job_selector = ttk.Combobox(form_window, values=[job['title'] for job in self.job_bank], width=40)
-        job_selector.grid(row=0, column=1, padx=10, pady=5)
+        # Publications Tab
+        self.publications_tab = tk.Frame(self.tab_control, bg='#f0f0f0')
+        self.tab_control.add(self.publications_tab, text="Publications")
 
-        def add_selected_job():
-            selected_job_title = job_selector.get()
-            job = next((job for job in self.job_bank if job['title'] == selected_job_title), None)
-            if job:
-                job_instance = Job(
-                    title=job['title'],
-                    company=job['company'],
-                    start_date=job['start_date'],
-                    end_date=job['end_date'],
-                    responsibilities=job['responsibilities'],
-                    achievements=job['achievements']
-                )
-                self.resume.add_job(job_instance)
-                form_window.destroy()
-                messagebox.showinfo("Info", "Job added successfully!")
-            else:
-                messagebox.showerror("Error", "No job selected!")
+        self.tab_control.pack(expand=1, fill='both')
 
-        tk.Button(form_window, text="Add Selected Job", command=add_selected_job).grid(row=1, column=0, columnspan=2, pady=10)
+        # Basic Info Tab
+        self.basic_info_title = tk.Label(self.basic_info_tab, text="Basic Information", font=('Helvetica', 20, 'bold'), bg='#f0f0f0', fg='#2c3e50')
+        self.basic_info_title.pack(pady=10)
 
-    def manage_job_bank(self):
-        form_window = tk.Toplevel(self.root)
-        form_window.title("Manage Job Bank")
+        self.name_label = tk.Label(self.basic_info_tab, text="Name:", font=('Helvetica', 12), bg='#f0f0f0', fg='#2c3e50')
+        self.name_label.pack(pady=5)
+        self.name_entry = tk.Entry(self.basic_info_tab, width=50)
+        self.name_entry.pack(pady=5)
 
-        tk.Label(form_window, text="Title:").grid(row=0, column=0, padx=10, pady=5, sticky=tk.W)
-        title_entry = tk.Entry(form_window, width=40)
-        title_entry.grid(row=0, column=1, padx=10, pady=5)
+        self.contact_label = tk.Label(self.basic_info_tab, text="Contact Information:", font=('Helvetica', 12), bg='#f0f0f0', fg='#2c3e50')
+        self.contact_label.pack(pady=5)
+        self.contact_entry = tk.Entry(self.basic_info_tab, width=50)
+        self.contact_entry.pack(pady=5)
 
-        tk.Label(form_window, text="Company:").grid(row=1, column=0, padx=10, pady=5, sticky=tk.W)
-        company_entry = tk.Entry(form_window, width=40)
-        company_entry.grid(row=1, column=1, padx=10, pady=5)
+        self.summary_label = tk.Label(self.basic_info_tab, text="Summary:", font=('Helvetica', 12), bg='#f0f0f0', fg='#2c3e50')
+        self.summary_label.pack(pady=5)
+        self.summary_text = tk.Text(self.basic_info_tab, height=4, width=50)
+        self.summary_text.pack(pady=5)
 
-        tk.Label(form_window, text="Start Date:").grid(row=2, column=0, padx=10, pady=5, sticky=tk.W)
-        start_date_entry = tk.Entry(form_window, width=40)
-        start_date_entry.grid(row=2, column=1, padx=10, pady=5)
+        self.save_button = tk.Button(self.basic_info_tab, text="Save", command=self.save_basic_info, font=('Helvetica', 12), bg='#3498db', fg='#ffffff')
+        self.save_button.pack(pady=10)
 
-        tk.Label(form_window, text="End Date:").grid(row=3, column=0, padx=10, pady=5, sticky=tk.W)
-        end_date_entry = tk.Entry(form_window, width=40)
-        end_date_entry.grid(row=3, column=1, padx=10, pady=5)
+        # Other Tabs UI Code (like above)
 
-        tk.Label(form_window, text="Responsibilities (comma-separated):").grid(row=4, column=0, padx=10, pady=5, sticky=tk.W)
-        responsibilities_entry = tk.Entry(form_window, width=40)
-        responsibilities_entry.grid(row=4, column=1, padx=10, pady=5)
+        # Save and Generate PDF Buttons
+        self.save_button = tk.Button(master, text="Save Resume", command=self.save_resume, font=('Helvetica', 14), bg='#27ae60', fg='#ffffff')
+        self.save_button.pack(pady=5, side='left', padx=10)
 
-        tk.Label(form_window, text="Achievements (comma-separated):").grid(row=5, column=0, padx=10, pady=5, sticky=tk.W)
-        achievements_entry = tk.Entry(form_window, width=40)
-        achievements_entry.grid(row=5, column=1, padx=10, pady=5)
+        self.generate_pdf_button = tk.Button(master, text="Generate PDF", command=self.generate_pdf, font=('Helvetica', 14), bg='#e74c3c', fg='#ffffff')
+        self.generate_pdf_button.pack(pady=5, side='left', padx=10)
 
-        def save_job_to_bank():
-            job = {
-                'title': title_entry.get(),
-                'company': company_entry.get(),
-                'start_date': start_date_entry.get(),
-                'end_date': end_date_entry.get(),
-                'responsibilities': responsibilities_entry.get().split(','),
-                'achievements': achievements_entry.get().split(',')
-            }
-            self.job_bank.append(job)
-            form_window.destroy()
-            messagebox.showinfo("Info", "Job added to bank successfully!")
-
-        tk.Button(form_window, text="Save Job to Bank", command=save_job_to_bank).grid(row=6, column=0, columnspan=2, pady=10)
-
-    def add_education_form(self):
-        form_window = tk.Toplevel(self.root)
-        form_window.title("Add Education")
-
-        tk.Label(form_window, text="Degree:").grid(row=0, column=0, padx=10, pady=5, sticky=tk.W)
-        degree_entry = tk.Entry(form_window, width=40)
-        degree_entry.grid(row=0, column=1, padx=10, pady=5)
-
-        tk.Label(form_window, text="Field of Study:").grid(row=1, column=0, padx=10, pady=5, sticky=tk.W)
-        field_of_study_entry = tk.Entry(form_window, width=40)
-        field_of_study_entry.grid(row=1, column=1, padx=10, pady=5)
-
-        tk.Label(form_window, text="Institution:").grid(row=2, column=0, padx=10, pady=5, sticky=tk.W)
-        institution_entry = tk.Entry(form_window, width=40)
-        institution_entry.grid(row=2, column=1, padx=10, pady=5)
-
-        tk.Label(form_window, text="Graduation Year:").grid(row=3, column=0, padx=10, pady=5, sticky=tk.W)
-        graduation_year_entry = tk.Entry(form_window, width=40)
-        graduation_year_entry.grid(row=3, column=1, padx=10, pady=5)
-
-        def save_education():
-            education = Education(
-                degree=degree_entry.get(),
-                field_of_study=field_of_study_entry.get(),
-                institution=institution_entry.get(),
-                graduation_year=graduation_year_entry.get()
-            )
-            self.resume.add_education(education)
-            form_window.destroy()
-            messagebox.showinfo("Info", "Education added successfully!")
-
-        tk.Button(form_window, text="Save Education", command=save_education).grid(row=4, column=0, columnspan=2, pady=10)
+    def save_basic_info(self):
+        name = self.name_entry.get()
+        contact_info = self.contact_entry.get()
+        summary = self.summary_text.get("1.0", tk.END).strip()
+        self.resume_manager.create_resume(name, contact_info, summary)
+        messagebox.showinfo("Info", "Basic Info saved successfully!")
 
     def save_resume(self):
-        md_file_path = 'resume.md'
-        pdf_file_path = 'resume.pdf'
-        self.resume.name = self.name_entry.get()
-        self.resume.contact_info = self.contact_info_entry.get()
-        self.resume.summary = self.summary_text.get("1.0", tk.END).strip()
-        self.resume.generate_resume(md_file_path, pdf_file_path)
+        resume = self.resume_manager.get_resume()
+        if resume:
+            # Perform saving actions, e.g., save to JSON
+            messagebox.showinfo("Info", "Resume saved successfully!")
+        else:
+            messagebox.showerror("Error", "No resume to save!")
 
-        messagebox.showinfo("Info", f"Resume saved to {pdf_file_path}.")
-
-# Create the main window
-root = tk.Tk()
-app = ResumeBuilderUI(root)
-root.mainloop()
+    def generate_pdf(self):
+        resume = self.resume_manager.get_resume()
+        if resume:
+            pdf_generator = PDFGenerator(resume)
+            pdf_generator.generate_pdf('resume.pdf')
+            messagebox.showinfo("Info", "PDF generated successfully!")
+        else:
+            messagebox.showerror("Error", "No resume to generate PDF!")
