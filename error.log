@@ -2,3 +2,21 @@
 2024-06-26 20:38:21,651 ERROR: Error in main: module 'utils' has no attribute 'load_dataset'
 2024-06-26 20:38:27,845 ERROR: Error in main: module 'utils' has no attribute 'load_dataset'
 2024-07-01 10:00:34,761 ERROR: Error in main: database database is locked
+2024-07-01 11:31:58,482 ERROR: Error in main: Incorrect path_or_model_id: 'GPT2Tokenizer(name_or_path='gpt2', vocab_size=50257, model_max_length=1024, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': '<|endoftext|>', 'eos_token': '<|endoftext|>', 'unk_token': '<|endoftext|>', 'pad_token': '<|endoftext|>'}, clean_up_tokenization_spaces=True),  added_tokens_decoder={
+	50256: AddedToken("<|endoftext|>", rstrip=False, lstrip=False, single_word=False, normalized=True, special=True),
+}'. Please provide either the path to a local folder or the repo_id of a model on the Hub.
+2024-07-01 11:34:08,456 ERROR: Error in main: Incorrect path_or_model_id: 'GPT2Tokenizer(name_or_path='gpt2', vocab_size=50257, model_max_length=1024, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': '<|endoftext|>', 'eos_token': '<|endoftext|>', 'unk_token': '<|endoftext|>', 'pad_token': '<|endoftext|>'}, clean_up_tokenization_spaces=True),  added_tokens_decoder={
+	50256: AddedToken("<|endoftext|>", rstrip=False, lstrip=False, single_word=False, normalized=True, special=True),
+}'. Please provide either the path to a local folder or the repo_id of a model on the Hub.
+2024-07-01 11:35:12,750 ERROR: Error in main: Incorrect path_or_model_id: 'GPT2Tokenizer(name_or_path='gpt2', vocab_size=50257, model_max_length=1024, is_fast=False, padding_side='right', truncation_side='right', special_tokens={'bos_token': '<|endoftext|>', 'eos_token': '<|endoftext|>', 'unk_token': '<|endoftext|>', 'pad_token': '<|endoftext|>'}, clean_up_tokenization_spaces=True),  added_tokens_decoder={
+	50256: AddedToken("<|endoftext|>", rstrip=False, lstrip=False, single_word=False, normalized=True, special=True),
+}'. Please provide either the path to a local folder or the repo_id of a model on the Hub.
+2024-07-01 11:36:15,284 ERROR: Error in main: name 'GPT2Tokenizer' is not defined
+2024-07-01 11:44:13,255 ERROR: Error in main: The file at path 'C:/Users/Ethan/Documents/sample/dataset2.csv' is empty.
+2024-07-01 11:47:42,690 ERROR: Error in main: num_samples should be a positive integer value, but got num_samples=0
+2024-07-01 11:52:08,246 ERROR: Error in main: need to escape, but no escapechar set
+2024-07-01 12:01:14,092 ERROR: Error in main: need to escape, but no escapechar set
+2024-07-01 12:02:42,558 ERROR: Error in main: need to escape, but no escapechar set
+2024-07-01 12:03:34,752 ERROR: Error in main: num_samples should be a positive integer value, but got num_samples=0
+2024-07-01 12:04:02,706 ERROR: Error in main: need to escape, but no escapechar set
+2024-07-01 12:04:57,891 ERROR: Error in main: num_samples should be a positive integer value, but got num_samples=0

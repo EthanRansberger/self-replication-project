@@ -2,6 +2,17 @@ from transformers import GPT2LMHeadModel, GPT2Tokenizer, Trainer, TrainingArgume
 from torch.utils.data import DataLoader
 
 def train_model(dataset, model_name='gpt2'):
+    """
+    Train a GPT-2 model on the given dataset.
+    
+    Args:
+        dataset (PandasDataset): The dataset to train the model on.
+        model_name (str): The name of the pre-trained model to use. Defaults to 'gpt2'.
+    
+    Returns:
+        model (GPT2LMHeadModel): The trained GPT-2 model.
+        tokenizer (GPT2Tokenizer): The tokenizer used for training.
+    """
     # Initialize tokenizer and model
     tokenizer = GPT2Tokenizer.from_pretrained(model_name)
     tokenizer.pad_token = tokenizer.eos_token  # Ensure the pad_token is set

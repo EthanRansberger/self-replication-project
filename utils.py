@@ -31,25 +31,28 @@ def save_dataset(dataframe, path):
 
 def load_dataset(path):
     """
-    Load the DataFrame from a CSV file.
-    
+    Load the DataFrame from a CSV file. If an error occurs, create a new DataFrame.
+
     Args:
         path (str): The path to the CSV file.
         
     Returns:
-        pd.DataFrame: The loaded DataFrame.
-        
-    Raises:
-        FileNotFoundError: If the CSV file does not exist.
+        pd.DataFrame: The loaded DataFrame, or an empty DataFrame if an error occurs.
     """
     try:
-        return pd.read_csv(path)
+        df = pd.read_csv(path)
     except FileNotFoundError:
-        raise FileNotFoundError(f"The file at path '{path}' does not exist.")
+        print(f"The file at path '{path}' does not exist. Creating a new empty DataFrame.")
+        df = pd.DataFrame(columns=['text'])  # Create an empty DataFrame with the expected column name
     except pd.errors.EmptyDataError:
-        raise ValueError(f"The file at path '{path}' is empty.")
+        print(f"The file at path '{path}' is empty. Creating a new empty DataFrame.")
+        df = pd.DataFrame(columns=['text'])  # Create an empty DataFrame with the expected column name
     except pd.errors.ParserError:
-        raise ValueError(f"The file at path '{path}' could not be parsed.")
+        print(f"The file at path '{path}' could not be parsed. Creating a new empty DataFrame.")
+        df = pd.DataFrame(columns=['text'])  # Create an empty DataFrame with the expected column name
+
+    return df
+
 
 def append_to_dataset(dataframe, new_text):
     """
