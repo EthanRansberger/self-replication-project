@@ -1,3 +1,4 @@
 2024-06-26 20:27:23,060 ERROR: Error in main: cannot reshape tensor of 0 elements into shape [-1, 0] because the unspecified dimension size -1 can be any value and is ambiguous
 2024-06-26 20:38:21,651 ERROR: Error in main: module 'utils' has no attribute 'load_dataset'
 2024-06-26 20:38:27,845 ERROR: Error in main: module 'utils' has no attribute 'load_dataset'
+2024-07-01 10:00:34,761 ERROR: Error in main: database database is locked

@@ -1,78 +1,108 @@
-# main.py
-
 import os
-import pdfread
+import pandas as pd
+from dataset import PandasDataset  # Import the PandasDataset class
+import errorhandling
+import csvreader
+import sqlitereader
 import modeltrainer
 import textgenerator
-from dataset import PandasDataset
-import pandas as pd
-from transformers import GPT2Tokenizer, GPT2LMHeadModel
 import utils
-import nltk
-from errorhandling import handle_error  # Import the error handling decorator
 
-# Download NLTK data
-nltk.download('punkt')
+# Main function
+@errorhandling.handle_errors
+def main(dataset_path, csv_folder_path, context_split_regex, sqlite_folder_path):
+    print("Initializing...")
 
-# Import the error handling decorator
-from errorhandling import handle_error
+    # Read CSV files from folder
+    csv_texts = csvreader.read_csv_files(csv_folder_path)
 
-@handle_error  # Apply error handling to the main function
-def main(folder_path, dataset_path, context_split_regex):
-    # Step 1: Extract text from PDFs
-    pdf_paths = pdfread.get_pdf_paths(folder_path)
-    raw_texts = pdfread.extract_text_from_pdfs(pdf_paths)
-    
-    # Step 2: Clean the extracted text and split by context
-    cleaned_texts = [pdfread.clean_text(text) for text in raw_texts]
-    split_texts = pdfread.split_text_by_context(cleaned_texts, context_split_regex)
+    # Read SQLite files
+    sqlite_texts = sqlitereader.read_sqlite_files(sqlite_folder_path)
 
-    # Load or initialize the dataset
-    if os.path.exists(dataset_path):
-        try:
-            df = utils.load_dataset(dataset_path)
-            df = utils.filter_empty_entries(df)
-        except pd.errors.ParserError:
-            print(f"Error parsing {dataset_path}. Initializing new dataset.")
-            df = pd.DataFrame(split_texts, columns=['text'])
-            df = utils.filter_empty_entries(df)
-            utils.save_dataset(df, dataset_path)
-    else:
-        df = pd.DataFrame(split_texts, columns=['text'])
-        df = utils.filter_empty_entries(df)
-        utils.save_dataset(df, dataset_path)
+    # Combine the texts from CSV and SQLite
+    combined_texts = csv_texts + sqlite_texts
 
-    # Initialize tokenizer
-    tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
-    tokenizer.pad_token = tokenizer.eos_token
+    # Check if we have any texts
+    if not combined_texts:
+        raise ValueError("No texts found in CSV or SQLite files.")
 
-    # Create a PandasDataset instance
-    dataset = PandasDataset(df, tokenizer)
+    # Create a DataFrame for the combined texts
+    dataframe = pd.DataFrame(combined_texts, columns=['text'])
 
-    # Step 3: Train the language model (Optional if model is already trained)
-    model, tokenizer = modeltrainer.train_model(dataset)
+    # Filter out empty entries
+    dataframe = utils.filter_empty_entries(dataframe)
 
-    # Start conversation loop
-    print("Initializing conversation... Type 'exit' to end.")
+    # Save the dataset to a CSV file
+    utils.save_dataset(dataframe, dataset_path)
+
+    # Load the dataset (in case it needs to be reloaded after modifications)
+    dataframe = utils.load_dataset(dataset_path)
+
+    # Initialize the tokenizer
+    tokenizer = modeltrainer.load_tokenizer('gpt2')
+
+    # Create a dataset and dataloader for training
+    train_dataset = PandasDataset(dataframe, tokenizer, max_length=512)
+
+    # Check if the dataset is empty
+    if len(train_dataset) == 0:
+        raise ValueError("The dataset is empty. Please check your data loading process.")
+
+    train_dataloader = modeltrainer.create_dataloader(train_dataset, batch_size=4)
+
+    # Set up the model
+    model_name = 'gpt2'
+    model = modeltrainer.load_model(model_name)
+
+    # Train the model
+    modeltrainer.train_model(
+        model=model,
+        tokenizer=tokenizer,
+        dataloader=train_dataloader,
+        num_train_epochs=1,
+        per_device_train_batch_size=4
+    )
+
+    print("Model trained successfully!")
+
+    # Interactive chat with the model
+    print("\nYou can now talk to the model. Type 'exit' to end the conversation.")
     while True:
-        user_input = input("You: ")
-
+        user_input = input("\nYou: ")
         if user_input.lower() == 'exit':
-            print("Ending conversation...")
             break
 
-        # Append new information to the dataset
-        df = utils.append_to_dataset(df, user_input)
-        df = utils.filter_empty_entries(df)
-        utils.save_dataset(df, dataset_path)
+        # Generate a response from the model
+        generated_text = textgenerator.generate_text(model, tokenizer, user_input)
+        print(f"Model: {generated_text}")
 
-        # Generate and print response
-        response = textgenerator.generate_text(model, tokenizer, user_input)
-        print(f"Model: {response}")
+        # Append the user's input and model's response to the dataset
+        new_entry = f"You: {user_input}\nModel: {generated_text}"
+        dataframe = utils.append_to_dataset(dataframe, new_entry)
+        utils.save_dataset(dataframe, dataset_path)  # Save the updated dataset
 
+    print("Conversation ended.")
+
+# Call the main function with the appropriate arguments
 if __name__ == "__main__":
-    print("Initializing...")
-    folder_path = 'C:/Users/Ethan/Documents/sample/'  # Replace with your folder containing PDFs
-    dataset_path = 'C:/Users/Ethan/Documents/sample/dataset.csv'  # Path to your dataset
-    context_split_regex = r'\n\n'  # Define your context split regex here
-    main(folder_path, dataset_path, context_split_regex)
+    import argparse
+
+    # Argument parsing
+    parser = argparse.ArgumentParser(description="Run the text generation and training process.")
+    parser.add_argument('--dataset_path', type=str, default='C:/Users/Ethan/Documents/sample/dataset.csv',
+                        help='Path to save or load the dataset CSV file.')
+    parser.add_argument('--csv_folder_path', type=str, default='C:/Users/Ethan/Documents/sample/csv/',
+                        help='Path to the folder containing additional CSV files.')
+    parser.add_argument('--context_split_regex', type=str, default=r'\n\n',
+                        help='Regex pattern to split text contexts.')
+    parser.add_argument('--sqlite_folder_path', type=str, default='C:/Users/Ethan/Documents/sample/sqlite/',
+                        help='Path to the folder containing SQLite files.')
+
+    args = parser.parse_args()
+
+    main(
+        dataset_path=args.dataset_path,
+        csv_folder_path=args.csv_folder_path,
+        context_split_regex=args.context_split_regex,
+        sqlite_folder_path=args.sqlite_folder_path
+    )

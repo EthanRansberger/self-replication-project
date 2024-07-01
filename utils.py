@@ -1,49 +1,71 @@
 import pandas as pd
 
-def load_dataset(dataset_path):
-    """
-    Load the dataset from a CSV file.
-    
-    Args:
-        dataset_path (str): The path to the CSV file containing the dataset.
-        
-    Returns:
-        pd.DataFrame: The loaded dataset as a pandas DataFrame.
-    """
-    return pd.read_csv(dataset_path)
-
-def save_dataset(df, dataset_path):
-    """
-    Save the dataset to a CSV file.
-    
-    Args:
-        df (pd.DataFrame): The dataset to save.
-        dataset_path (str): The path to the CSV file where the dataset will be saved.
-    """
-    df.to_csv(dataset_path, index=False)
-
-def filter_empty_entries(df):
+def filter_empty_entries(dataframe):
     """
     Filter out empty entries from the DataFrame.
     
     Args:
-        df (pd.DataFrame): The dataset to filter.
+        dataframe (pd.DataFrame): The DataFrame to filter.
         
     Returns:
-        pd.DataFrame: The filtered dataset.
+        pd.DataFrame: The filtered DataFrame.
     """
-    return df.dropna(subset=['text'])
+    if 'text' not in dataframe.columns:
+        raise ValueError("The DataFrame must contain a 'text' column.")
+    return dataframe[dataframe['text'].str.strip() != '']
 
-def append_to_dataset(df, text):
+def save_dataset(dataframe, path):
     """
-    Append a new text entry to the dataset.
+    Save the DataFrame to a CSV file.
     
     Args:
-        df (pd.DataFrame): The dataset to append to.
-        text (str): The text entry to append.
+        dataframe (pd.DataFrame): The DataFrame to save.
+        path (str): The path to save the CSV file.
+        
+    Raises:
+        ValueError: If the path is invalid or the DataFrame is empty.
+    """
+    if dataframe.empty:
+        raise ValueError("The DataFrame is empty and cannot be saved.")
+    dataframe.to_csv(path, index=False)
+
+def load_dataset(path):
+    """
+    Load the DataFrame from a CSV file.
+    
+    Args:
+        path (str): The path to the CSV file.
         
     Returns:
-        pd.DataFrame: The updated dataset.
+        pd.DataFrame: The loaded DataFrame.
+        
+    Raises:
+        FileNotFoundError: If the CSV file does not exist.
     """
-    new_entry = pd.DataFrame([[text]], columns=['text'])
-    return pd.concat([df, new_entry], ignore_index=True)
+    try:
+        return pd.read_csv(path)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"The file at path '{path}' does not exist.")
+    except pd.errors.EmptyDataError:
+        raise ValueError(f"The file at path '{path}' is empty.")
+    except pd.errors.ParserError:
+        raise ValueError(f"The file at path '{path}' could not be parsed.")
+
+def append_to_dataset(dataframe, new_text):
+    """
+    Append a new text entry to the DataFrame.
+    
+    Args:
+        dataframe (pd.DataFrame): The DataFrame to append to.
+        new_text (str): The new text entry to add.
+        
+    Returns:
+        pd.DataFrame: The updated DataFrame.
+        
+    Raises:
+        ValueError: If the DataFrame does not have a 'text' column.
+    """
+    if 'text' not in dataframe.columns:
+        raise ValueError("The DataFrame must contain a 'text' column.")
+    new_entry = pd.DataFrame({'text': [new_text]})
+    return pd.concat([dataframe, new_entry], ignore_index=True)
