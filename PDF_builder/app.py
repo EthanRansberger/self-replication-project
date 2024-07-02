@@ -1,7 +1,7 @@
 # app.py
 
 import tkinter as tk
-from resume_management import ResumeBuilderUI
+from resume_builder_ui import ResumeBuilderUI
 
 def main():
     root = tk.Tk()
