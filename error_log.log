@@ -1,0 +1,5 @@
+2024-07-01 10:06:51,949 - ERROR - An error occurred in function main: [Errno 2] No such file or directory: 'C'
+2024-07-01 10:07:50,585 - ERROR - An error occurred in function main: no such table: text_table
+2024-07-01 10:08:03,617 - ERROR - An error occurred in function main: no such table: text_table
+2024-07-01 10:08:52,992 - ERROR - An error occurred in function main: train_model() takes from 1 to 2 positional arguments but 3 were given
+2024-07-01 10:10:21,065 - ERROR - An error occurred in function main: train_model() takes from 1 to 2 positional arguments but 3 were given
