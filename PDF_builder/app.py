@@ -1,5 +1,3 @@
-# app.py
-
 import tkinter as tk
 from resume_builder_ui import ResumeBuilderUI
 

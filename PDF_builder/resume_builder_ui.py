@@ -1,5 +1,3 @@
-# resume_builder_ui.py
-
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog, messagebox
@@ -18,11 +16,22 @@ class ResumeBuilderUI:
         
     def create_widgets(self):
         # Create a frame for the tabs
-        tab_frame = ttk.Frame(self.root)
-        tab_frame.pack(padx=10, pady=10, fill='x')
-        
+        main_frame = ttk.Frame(self.root)
+        main_frame.pack(fill='both', expand=True)
+
+        # Create a frame for the sidebar and content
+        sidebar_frame = ttk.Frame(main_frame, width=200)
+        sidebar_frame.pack(side='left', fill='y')
+        content_frame = ttk.Frame(main_frame)
+        content_frame.pack(side='right', fill='both', expand=True)
+
+        # Sidebar
+        self.sidebar = tk.Listbox(sidebar_frame)
+        self.sidebar.pack(fill='y', expand=True)
+        self.sidebar.bind('<<ListboxSelect>>', self.on_sidebar_select)
+
         # Tabs
-        self.tabs = ttk.Notebook(self.root)
+        self.tabs = ttk.Notebook(content_frame)
         self.tabs.pack(expand=1, fill='both')
 
         self.create_contact_tab()
@@ -43,12 +52,11 @@ class ResumeBuilderUI:
         ttk.Button(button_frame, text="Load Resume", command=self.load_resume).pack(side=tk.LEFT, padx=5)
         ttk.Button(button_frame, text="Convert to PDF", command=self.convert_to_pdf).pack(side=tk.LEFT, padx=5)
 
-        # ATS Platform Selection
-        ttk.Label(button_frame, text="Select ATS Platform:").pack(side=tk.LEFT, padx=5)
-        self.ats_platform_var = tk.StringVar(value="Taleo")
-        self.ats_platform_menu = ttk.Combobox(button_frame, textvariable=self.ats_platform_var)
-        self.ats_platform_menu['values'] = ("Taleo", "Workday")
-        self.ats_platform_menu.pack(side=tk.LEFT, padx=5)
+    def on_sidebar_select(self, event):
+        selected_index = self.sidebar.curselection()
+        if selected_index:
+            item = self.sidebar.get(selected_index)
+            # Logic to repopulate fields based on selected item
 
     def create_contact_tab(self):
         contact_frame = ttk.Frame(self.tabs)
@@ -251,6 +259,7 @@ class ResumeBuilderUI:
             self.person.add_skill(skill_name)
             self.skill_name_entry.delete(0, tk.END)
             self.is_hard_skill_var.set(False)
+            self.update_sidebar()
 
     def add_education(self):
         degree = self.education_fields["Degree"].get()
@@ -264,6 +273,7 @@ class ResumeBuilderUI:
             self.person.add_education(degree, institution, start_date, end_date, major, minor, additional_info)
             for field in self.education_fields.values():
                 field.set("")
+            self.update_sidebar()
 
     def add_certification(self):
         name = self.certification_fields["Name"].get()
@@ -274,6 +284,7 @@ class ResumeBuilderUI:
             self.person.add_certification(name, issuing_org, issue_date, expiration_date)
             for field in self.certification_fields.values():
                 field.set("")
+            self.update_sidebar()
 
     def add_project(self):
         title = self.project_fields["Title"].get()
@@ -285,6 +296,7 @@ class ResumeBuilderUI:
             self.person.add_project(title, description, technologies, start_date, end_date)
             for field in self.project_fields.values():
                 field.set("")
+            self.update_sidebar()
 
     def add_award(self):
         name = self.award_fields["Name"].get()
@@ -294,6 +306,7 @@ class ResumeBuilderUI:
             self.person.add_award(name, description, date)
             for field in self.award_fields.values():
                 field.set("")
+            self.update_sidebar()
 
     def add_publication(self):
         title = self.publication_fields["Title"].get()
@@ -304,6 +317,7 @@ class ResumeBuilderUI:
             self.person.add_publication(title, journal, date, description)
             for field in self.publication_fields.values():
                 field.set("")
+            self.update_sidebar()
 
     def add_volunteer_experience(self):
         role = self.volunteer_fields["Role"].get()
@@ -315,6 +329,7 @@ class ResumeBuilderUI:
             self.person.add_volunteer_experience(role, organization, start_date, end_date, description)
             for field in self.volunteer_fields.values():
                 field.set("")
+            self.update_sidebar()
 
     def add_job(self):
         title = self.job_fields["Title"].get()
@@ -326,6 +341,7 @@ class ResumeBuilderUI:
             self.person.add_experience(title, company, start_date, end_date, description)
             for field in self.job_fields.values():
                 field.set("")
+            self.update_sidebar()
 
     def add_language(self):
         name = self.language_fields["Name"].get()
@@ -334,6 +350,28 @@ class ResumeBuilderUI:
             self.person.add_language(name, proficiency)
             for field in self.language_fields.values():
                 field.set("")
+            self.update_sidebar()
+
+    def update_sidebar(self):
+        self.sidebar.delete(0, tk.END)
+        for skill in self.person.skills:
+            self.sidebar.insert(tk.END, skill.name)
+        for edu in self.person.education:
+            self.sidebar.insert(tk.END, f"{edu.degree} in {edu.major}")
+        for cert in self.person.certifications:
+            self.sidebar.insert(tk.END, cert.name)
+        for proj in self.person.projects:
+            self.sidebar.insert(tk.END, proj.title)
+        for award in self.person.awards:
+            self.sidebar.insert(tk.END, award.name)
+        for pub in self.person.publications:
+            self.sidebar.insert(tk.END, pub.title)
+        for vol in self.person.volunteer_experiences:
+            self.sidebar.insert(tk.END, vol.role)
+        for job in self.person.experiences:
+            self.sidebar.insert(tk.END, job.title)
+        for lang in self.person.languages:
+            self.sidebar.insert(tk.END, lang.name)
 
     def save_resume(self):
         filename = filedialog.asksaveasfilename(defaultextension=".json", filetypes=[("JSON files", "*.json")])
@@ -345,13 +383,13 @@ class ResumeBuilderUI:
         filename = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
         if filename:
             self.person = resume_util.Person.load_from_json(filename)
+            self.update_sidebar()
             messagebox.showinfo("Success", "Resume loaded successfully!")
 
     def convert_to_pdf(self):
         filename = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF files", "*.pdf")])
         if filename:
-            ats_platform = self.ats_platform_var.get()
-            pdf_generator = PDFGenerator(self.person, filename, platform=ats_platform)
+            pdf_generator = PDFGenerator(self.person, filename)
             pdf_generator.generate_pdf()
             messagebox.showinfo("Success", "Resume converted to PDF successfully!")
 

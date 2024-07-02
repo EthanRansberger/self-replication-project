@@ -3,10 +3,12 @@
     "summary": null,
     "skills": [
         {
-            "name": "test"
+            "name": "test",
+            "is_hard_skill": false
         },
         {
-            "name": "Python"
+            "name": "Python",
+            "is_hard_skill": false
         }
     ],
     "experiences": [],

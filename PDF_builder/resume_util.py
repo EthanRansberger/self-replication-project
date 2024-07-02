@@ -1,5 +1,3 @@
-# resume_util.py
-
 class Skill:
     def __init__(self, name):
         self.name = name
@@ -175,26 +173,3 @@ class Resume:
     def load_resume(cls, person_filename, job):
         person = Person.load_from_json(person_filename)
         return cls(person, job)
-
-# ATS-specific formatting function
-def format_for_ats(content, platform):
-    platform_guidelines = {
-        "Taleo": {"font": "Arial", "avoid": ["tables", "columns", "special characters"], "order": ["Contact Information", "Summary", "Work Experience", "Education", "Skills", "Certifications"]},
-        "Workday": {"font": "Times New Roman", "avoid": ["tables", "columns", "graphics"], "order": ["Contact Information", "Summary", "Work Experience", "Education", "Skills", "Certifications"]}
-        # Add more platforms...
-    }
-
-    if platform not in platform_guidelines:
-        raise ValueError(f"Platform '{platform}' not supported.")
-
-    guidelines = platform_guidelines[platform]
-    formatted_content = []
-
-    # Format content according to the guidelines
-    for section in guidelines["order"]:
-        formatted_content.append(section.upper())
-        if section in content:
-            formatted_content.extend(content[section])
-            formatted_content.append("")  # Add a blank line after each section
-
-    return formatted_content, guidelines["font"]
