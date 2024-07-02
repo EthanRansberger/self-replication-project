@@ -1,3 +1,5 @@
+# resume_builder_ui.py
+
 import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog, messagebox
@@ -40,6 +42,13 @@ class ResumeBuilderUI:
         ttk.Button(button_frame, text="Save Resume", command=self.save_resume).pack(side=tk.LEFT, padx=5)
         ttk.Button(button_frame, text="Load Resume", command=self.load_resume).pack(side=tk.LEFT, padx=5)
         ttk.Button(button_frame, text="Convert to PDF", command=self.convert_to_pdf).pack(side=tk.LEFT, padx=5)
+
+        # ATS Platform Selection
+        ttk.Label(button_frame, text="Select ATS Platform:").pack(side=tk.LEFT, padx=5)
+        self.ats_platform_var = tk.StringVar(value="Taleo")
+        self.ats_platform_menu = ttk.Combobox(button_frame, textvariable=self.ats_platform_var)
+        self.ats_platform_menu['values'] = ("Taleo", "Workday")
+        self.ats_platform_menu.pack(side=tk.LEFT, padx=5)
 
     def create_contact_tab(self):
         contact_frame = ttk.Frame(self.tabs)
@@ -341,7 +350,8 @@ class ResumeBuilderUI:
     def convert_to_pdf(self):
         filename = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF files", "*.pdf")])
         if filename:
-            pdf_generator = PDFGenerator(self.person, filename)
+            ats_platform = self.ats_platform_var.get()
+            pdf_generator = PDFGenerator(self.person, filename, platform=ats_platform)
             pdf_generator.generate_pdf()
             messagebox.showinfo("Success", "Resume converted to PDF successfully!")
 
