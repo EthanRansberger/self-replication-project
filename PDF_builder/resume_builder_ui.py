@@ -26,9 +26,7 @@ class ResumeBuilderUI:
         content_frame.pack(side='right', fill='both', expand=True)
 
         # Sidebar
-        self.sidebar = tk.Listbox(sidebar_frame)
-        self.sidebar.pack(fill='y', expand=True)
-        self.sidebar.bind('<<ListboxSelect>>', self.on_sidebar_select)
+        self.create_sidebar(sidebar_frame)
 
         # Tabs
         self.tabs = ttk.Notebook(content_frame)
@@ -52,10 +50,45 @@ class ResumeBuilderUI:
         ttk.Button(button_frame, text="Load Resume", command=self.load_resume).pack(side=tk.LEFT, padx=5)
         ttk.Button(button_frame, text="Convert to PDF", command=self.convert_to_pdf).pack(side=tk.LEFT, padx=5)
 
+    def create_sidebar(self, parent):
+        self.sidebar_tabs = ttk.Notebook(parent)
+        self.sidebar_tabs.pack(expand=1, fill='both')
+
+        self.skill_sidebar = tk.Listbox(self.sidebar_tabs)
+        self.education_sidebar = tk.Listbox(self.sidebar_tabs)
+        self.certification_sidebar = tk.Listbox(self.sidebar_tabs)
+        self.project_sidebar = tk.Listbox(self.sidebar_tabs)
+        self.award_sidebar = tk.Listbox(self.sidebar_tabs)
+        self.publication_sidebar = tk.Listbox(self.sidebar_tabs)
+        self.volunteer_sidebar = tk.Listbox(self.sidebar_tabs)
+        self.job_sidebar = tk.Listbox(self.sidebar_tabs)
+        self.language_sidebar = tk.Listbox(self.sidebar_tabs)
+
+        self.skill_sidebar.bind('<Double-1>', self.on_sidebar_select)
+        self.education_sidebar.bind('<Double-1>', self.on_sidebar_select)
+        self.certification_sidebar.bind('<Double-1>', self.on_sidebar_select)
+        self.project_sidebar.bind('<Double-1>', self.on_sidebar_select)
+        self.award_sidebar.bind('<Double-1>', self.on_sidebar_select)
+        self.publication_sidebar.bind('<Double-1>', self.on_sidebar_select)
+        self.volunteer_sidebar.bind('<Double-1>', self.on_sidebar_select)
+        self.job_sidebar.bind('<Double-1>', self.on_sidebar_select)
+        self.language_sidebar.bind('<Double-1>', self.on_sidebar_select)
+
+        self.sidebar_tabs.add(self.skill_sidebar, text='Skills')
+        self.sidebar_tabs.add(self.education_sidebar, text='Education')
+        self.sidebar_tabs.add(self.certification_sidebar, text='Certifications')
+        self.sidebar_tabs.add(self.project_sidebar, text='Projects')
+        self.sidebar_tabs.add(self.award_sidebar, text='Awards')
+        self.sidebar_tabs.add(self.publication_sidebar, text='Publications')
+        self.sidebar_tabs.add(self.volunteer_sidebar, text='Volunteer')
+        self.sidebar_tabs.add(self.job_sidebar, text='Jobs')
+        self.sidebar_tabs.add(self.language_sidebar, text='Languages')
+
     def on_sidebar_select(self, event):
-        selected_index = self.sidebar.curselection()
+        selected_listbox = event.widget
+        selected_index = selected_listbox.curselection()
         if selected_index:
-            item = self.sidebar.get(selected_index)
+            item = selected_listbox.get(selected_index)
             # Logic to repopulate fields based on selected item
 
     def create_contact_tab(self):
@@ -256,10 +289,10 @@ class ResumeBuilderUI:
             skill_type = "Hard Skill" if is_hard_skill else "Soft Skill"
             skill_entry = f"{skill_name} ({skill_type})"
             self.skills_listbox.insert(tk.END, skill_entry)
+            self.skill_sidebar.insert(tk.END, skill_entry)
             self.person.add_skill(skill_name)
             self.skill_name_entry.delete(0, tk.END)
             self.is_hard_skill_var.set(False)
-            self.update_sidebar()
 
     def add_education(self):
         degree = self.education_fields["Degree"].get()
@@ -270,10 +303,11 @@ class ResumeBuilderUI:
         end_date = self.education_fields["End Date"].get()
         additional_info = self.education_fields["Additional Info"].get()
         if degree and institution and start_date and end_date:
+            education_entry = f"{degree} in {major}, {institution} ({start_date} to {end_date})"
+            self.education_sidebar.insert(tk.END, education_entry)
             self.person.add_education(degree, institution, start_date, end_date, major, minor, additional_info)
             for field in self.education_fields.values():
                 field.set("")
-            self.update_sidebar()
 
     def add_certification(self):
         name = self.certification_fields["Name"].get()
@@ -281,10 +315,11 @@ class ResumeBuilderUI:
         issue_date = self.certification_fields["Issue Date"].get()
         expiration_date = self.certification_fields["Expiration Date"].get()
         if name and issuing_org and issue_date:
+            certification_entry = f"{name}, {issuing_org} (Issued: {issue_date})"
+            self.certification_sidebar.insert(tk.END, certification_entry)
             self.person.add_certification(name, issuing_org, issue_date, expiration_date)
             for field in self.certification_fields.values():
                 field.set("")
-            self.update_sidebar()
 
     def add_project(self):
         title = self.project_fields["Title"].get()
@@ -293,20 +328,22 @@ class ResumeBuilderUI:
         start_date = self.project_fields["Start Date"].get()
         end_date = self.project_fields["End Date"].get()
         if title and description and technologies and start_date and end_date:
+            project_entry = f"{title} ({start_date} to {end_date})"
+            self.project_sidebar.insert(tk.END, project_entry)
             self.person.add_project(title, description, technologies, start_date, end_date)
             for field in self.project_fields.values():
                 field.set("")
-            self.update_sidebar()
 
     def add_award(self):
         name = self.award_fields["Name"].get()
         description = self.award_fields["Description"].get()
         date = self.award_fields["Date"].get()
         if name and description and date:
+            award_entry = f"{name} ({date})"
+            self.award_sidebar.insert(tk.END, award_entry)
             self.person.add_award(name, description, date)
             for field in self.award_fields.values():
                 field.set("")
-            self.update_sidebar()
 
     def add_publication(self):
         title = self.publication_fields["Title"].get()
@@ -314,10 +351,11 @@ class ResumeBuilderUI:
         date = self.publication_fields["Date"].get()
         description = self.publication_fields["Description"].get()
         if title and journal and date and description:
+            publication_entry = f"{title} in {journal} ({date})"
+            self.publication_sidebar.insert(tk.END, publication_entry)
             self.person.add_publication(title, journal, date, description)
             for field in self.publication_fields.values():
                 field.set("")
-            self.update_sidebar()
 
     def add_volunteer_experience(self):
         role = self.volunteer_fields["Role"].get()
@@ -326,10 +364,11 @@ class ResumeBuilderUI:
         end_date = self.volunteer_fields["End Date"].get()
         description = self.volunteer_fields["Description"].get()
         if role and organization and start_date and end_date and description:
+            volunteer_entry = f"{role} at {organization} ({start_date} to {end_date})"
+            self.volunteer_sidebar.insert(tk.END, volunteer_entry)
             self.person.add_volunteer_experience(role, organization, start_date, end_date, description)
             for field in self.volunteer_fields.values():
                 field.set("")
-            self.update_sidebar()
 
     def add_job(self):
         title = self.job_fields["Title"].get()
@@ -338,40 +377,21 @@ class ResumeBuilderUI:
         end_date = self.job_fields["End Date"].get()
         description = self.job_fields["Description"].get()
         if title and company and start_date and end_date and description:
+            job_entry = f"{title} at {company} ({start_date} to {end_date})"
+            self.job_sidebar.insert(tk.END, job_entry)
             self.person.add_experience(title, company, start_date, end_date, description)
             for field in self.job_fields.values():
                 field.set("")
-            self.update_sidebar()
 
     def add_language(self):
         name = self.language_fields["Name"].get()
         proficiency = self.language_fields["Proficiency"].get()
         if name and proficiency:
+            language_entry = f"{name}: {proficiency}"
+            self.language_sidebar.insert(tk.END, language_entry)
             self.person.add_language(name, proficiency)
             for field in self.language_fields.values():
                 field.set("")
-            self.update_sidebar()
-
-    def update_sidebar(self):
-        self.sidebar.delete(0, tk.END)
-        for skill in self.person.skills:
-            self.sidebar.insert(tk.END, skill.name)
-        for edu in self.person.education:
-            self.sidebar.insert(tk.END, f"{edu.degree} in {edu.major}")
-        for cert in self.person.certifications:
-            self.sidebar.insert(tk.END, cert.name)
-        for proj in self.person.projects:
-            self.sidebar.insert(tk.END, proj.title)
-        for award in self.person.awards:
-            self.sidebar.insert(tk.END, award.name)
-        for pub in self.person.publications:
-            self.sidebar.insert(tk.END, pub.title)
-        for vol in self.person.volunteer_experiences:
-            self.sidebar.insert(tk.END, vol.role)
-        for job in self.person.experiences:
-            self.sidebar.insert(tk.END, job.title)
-        for lang in self.person.languages:
-            self.sidebar.insert(tk.END, lang.name)
 
     def save_resume(self):
         filename = filedialog.asksaveasfilename(defaultextension=".json", filetypes=[("JSON files", "*.json")])
@@ -392,6 +412,36 @@ class ResumeBuilderUI:
             pdf_generator = PDFGenerator(self.person, filename)
             pdf_generator.generate_pdf()
             messagebox.showinfo("Success", "Resume converted to PDF successfully!")
+
+    def update_sidebar(self):
+        self.skill_sidebar.delete(0, tk.END)
+        self.education_sidebar.delete(0, tk.END)
+        self.certification_sidebar.delete(0, tk.END)
+        self.project_sidebar.delete(0, tk.END)
+        self.award_sidebar.delete(0, tk.END)
+        self.publication_sidebar.delete(0, tk.END)
+        self.volunteer_sidebar.delete(0, tk.END)
+        self.job_sidebar.delete(0, tk.END)
+        self.language_sidebar.delete(0, tk.END)
+        
+        for skill in self.person.skills:
+            self.skill_sidebar.insert(tk.END, skill.name)
+        for edu in self.person.education:
+            self.education_sidebar.insert(tk.END, f"{edu.degree} in {edu.major}")
+        for cert in self.person.certifications:
+            self.certification_sidebar.insert(tk.END, cert.name)
+        for proj in self.person.projects:
+            self.project_sidebar.insert(tk.END, proj.title)
+        for award in self.person.awards:
+            self.award_sidebar.insert(tk.END, award.name)
+        for pub in self.person.publications:
+            self.publication_sidebar.insert(tk.END, pub.title)
+        for vol in self.person.volunteer_experiences:
+            self.volunteer_sidebar.insert(tk.END, vol.role)
+        for job in self.person.experiences:
+            self.job_sidebar.insert(tk.END, job.title)
+        for lang in self.person.languages:
+            self.language_sidebar.insert(tk.END, lang.name)
 
 if __name__ == "__main__":
     root = tk.Tk()
