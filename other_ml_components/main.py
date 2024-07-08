@@ -1,21 +1,21 @@
 # main.py
 
 import os
-import pdfread
-import modeltrainer
+import other_ml_components.pdfread as pdfread
+import other_ml_components.modeltrainer as modeltrainer
 import textgenerator
-from dataset import PandasDataset
+from other_ml_components.dataset import PandasDataset
 import pandas as pd
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
 import utils
 import nltk
-from errorhandling import handle_error  # Import the error handling decorator
+from other_ml_components.errorhandling import handle_error  # Import the error handling decorator
 
 # Download NLTK data
 nltk.download('punkt')
 
 # Import the error handling decorator
-from errorhandling import handle_error
+from other_ml_components.errorhandling import handle_error
 
 @handle_error  # Apply error handling to the main function
 def main(folder_path, dataset_path, context_split_regex):

@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: App",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/PDF_builder/src/app.py",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Tests",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/PDF_builder/tests/test_resume_util.py",
+            "console": "integratedTerminal"
+        }
+    ]
+}
