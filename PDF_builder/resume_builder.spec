@@ -31,8 +31,8 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True,
-    icon='assets/icons/icon.ico',
+    console=True,  # Set to False if you don't want a console window
+    icon='assets/icons/icon.ico',  # Ensure this path is correct
 )
 coll = COLLECT(
     exe,
