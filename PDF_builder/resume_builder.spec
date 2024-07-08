@@ -5,10 +5,10 @@
 block_cipher = None
 
 a = Analysis(
-    ['src/app.py'],
-    pathex=['src'],
+    ['app.py'],  # Make sure this is the entry point of your application
+    pathex=['.'],  # Path to search for imports
     binaries=[],
-    datas=[('assets/icons/icon.ico', 'icon.ico')],
+    datas=[('assets/icons/icon.ico', 'icon.ico')],  # Include any necessary files
     hiddenimports=[],
     hookspath=[],
     runtime_hooks=[],
@@ -31,7 +31,7 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True,  # Set to False if you don't want a console window
+    console=False,  # Set to True if you want to see the console window
     icon='assets/icons/icon.ico',  # Ensure this path is correct
 )
 coll = COLLECT(

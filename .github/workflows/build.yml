@@ -27,14 +27,13 @@ jobs:
       run: python -m unittest discover -s PDF_builder/tests
 
     - name: Build executable with PyInstaller
-      run: |
-        pyinstaller --clean --distpath ./dist --workpath ./build PDF_builder/resume_builder.spec
+      run: pyinstaller --clean --distpath ./dist --workpath ./build PDF_builder/resume_builder.spec
 
     - name: Archive build artifacts
       uses: actions/upload-artifact@v2
       with:
         name: resume-builder-executable
-        path: dist/resume_builder  # Adjust if necessary
+        path: dist/resume_builder  # Path to the executable directory
 
   release:
     needs: build
@@ -55,8 +54,8 @@ jobs:
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: 'v0.0.2'
-        name: Release 0.0.2
-        files: ./dist/resume_builder  # Adjust if necessary
+        tag_name: 'v0.0.3'
+        name: Release 0.0.3
+        files: ./dist/resume_builder/resume_builder  # Adjust if necessary
       env:
-        GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
