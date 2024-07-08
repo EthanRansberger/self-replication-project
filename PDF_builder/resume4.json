@@ -1,0 +1,27 @@
+{
+    "contact_info": {},
+    "summary": null,
+    "skills": [
+        {
+            "name": "test",
+            "is_hard_skill": false
+        },
+        {
+            "name": "Python",
+            "is_hard_skill": false
+        }
+    ],
+    "experiences": [],
+    "education": [],
+    "certifications": [],
+    "awards": [],
+    "projects": [],
+    "publications": [],
+    "volunteer_experiences": [],
+    "languages": [
+        {
+            "name": "Spanish",
+            "proficiency": "Intermediate"
+        }
+    ]
+}

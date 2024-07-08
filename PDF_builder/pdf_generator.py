@@ -8,7 +8,10 @@ class PDFGenerator:
     def generate_pdf(self):
         pdf = FPDF()
         pdf.add_page()
-        pdf.set_font("Arial", size=12)
+        try:
+            pdf.set_font("Arial", size=12)
+        except RuntimeError:
+            pdf.set_font("Helvetica", size=12)
 
         pdf.cell(200, 10, txt="Resume", ln=True, align='C')
         pdf.ln(10)

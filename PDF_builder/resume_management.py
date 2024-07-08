@@ -1,7 +1,5 @@
-# resume_management.py
-
 import json
-import resume_util  # Import the resume_util module for ResumeManager
+import resume_util
 
 class ResumeManager:
     def __init__(self):
