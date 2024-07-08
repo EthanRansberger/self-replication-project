@@ -1,0 +1,3 @@
+fpdf
+pyinstaller
+# Add other dependencies as needed
