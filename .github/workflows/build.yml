@@ -55,7 +55,8 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: 'v0.0.4'
-        name: Release 0.0.4
+        name: 'Release 0.0.4'
         files: ./dist/resume_builder/resume_builder  # Adjust if necessary
+        prerelease: true  # Mark as a pre-release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
