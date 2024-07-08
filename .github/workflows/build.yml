@@ -23,16 +23,19 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Run tests
+      run: |
+        python -m unittest discover -s PDF_builder/tests
+
     - name: Build executable with PyInstaller
       run: |
         pyinstaller --onefile PDF_builder/src/app.py
-      # The '--onefile' option creates a single executable file
 
     - name: Archive build artifacts
       uses: actions/upload-artifact@v2
       with:
         name: resume-builder-executable
-        path: dist/app  # Adjust this if the executable has a different name or path
+        path: dist/app  # Adjust if necessary
 
   release:
     needs: build
@@ -50,6 +53,6 @@ jobs:
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        files: ./dist/app  # Adjust this if the executable has a different name or path
+        files: ./dist/app  # Adjust if necessary
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
