@@ -1,5 +1,3 @@
-# PDF_builder/tests/test_resume_util.py
-
 import unittest
 from PDF_builder.src.resume_util import Skill, Experience, Education, Certification, Person
 
