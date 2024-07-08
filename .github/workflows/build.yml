@@ -24,7 +24,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run tests
-      run: python -m unittest discover -s tests
+      run: python -m unittest discover -s PDF_builder/tests
 
     - name: Build executable with PyInstaller
       run: |
@@ -53,7 +53,7 @@ jobs:
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: '0.0.1'
+        tag_name: 'v0.0.1'
         name: Release 0.0.1
         files: ./dist/resume_builder  # Adjust if necessary
       env:
