@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - test  # Add a branch for testing purposes
 
 jobs:
   build:
@@ -50,13 +51,13 @@ jobs:
         name: resume-builder-executable
         path: ./dist
 
-    - name: Create GitHub Release
+    - name: Create GitHub Pre-Release
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: 'v0.0.4'
-        name: 'Release 0.0.4'
+        tag_name: 'v0.0.1-pre'  # Pre-release tag
+        name: 'Pre-Release 0.0.1'
         files: ./dist/resume_builder/resume_builder  # Adjust if necessary
-        prerelease: true  # Mark as a pre-release
+        prerelease: true  # Mark as pre-release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

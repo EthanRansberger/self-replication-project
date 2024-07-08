@@ -1,11 +1,11 @@
-# PDF_builder/resume_builder.spec
+# resume_builder.spec
 
 # -*- mode: python ; coding: utf-8 -*-
 
 block_cipher = None
 
 a = Analysis(
-    ['src/app.py'],  # Entry point of your application
+    ['src/app.py'],  # Make sure this is the entry point of your application
     pathex=['src'],  # Path to search for imports
     binaries=[],
     datas=[('assets/icons/icon.ico', 'icon.ico')],  # Include any necessary files
