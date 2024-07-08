@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - main
-      - 'release/*'  # Any other branches you want to include
-  pull_request:
-    branches:
-      - main
 
 jobs:
   build:
@@ -51,8 +47,11 @@ jobs:
         path: ./dist
 
     - name: Create GitHub Release
+      id: create_release
       uses: softprops/action-gh-release@v1
       with:
+        tag_name: '0.0.0'  # Fixed tag version
+        name: Release 0.0.0
         files: ./dist/app  # Adjust if necessary
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
