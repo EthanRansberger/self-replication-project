@@ -235,117 +235,79 @@ class ResumeBuilderUI:
     def add_skill(self):
         skill_name = self.skill_name_entry.get()
         is_hard_skill = self.is_hard_skill_var.get()
+
         if skill_name:
-            skill_type = "Hard Skill" if is_hard_skill else "Soft Skill"
-            skill_entry = f"{skill_name} ({skill_type})"
-            self.skills_listbox.insert(tk.END, skill_entry)
-            self.person.add_skill(skill_name)
+            skill_type = 'Hard' if is_hard_skill else 'Soft'
+            self.skills_listbox.insert(tk.END, f"{skill_name} ({skill_type})")
+            self.person.add_skill(skill_name, is_hard_skill)
             self.skill_name_entry.delete(0, tk.END)
-            self.is_hard_skill_var.set(False)
 
     def add_education(self):
-        degree = self.education_fields["Degree"].get()
-        major = self.education_fields["Major"].get()
-        minor = self.education_fields["Minor"].get()
-        institution = self.education_fields["Institution"].get()
-        start_date = self.education_fields["Start Date"].get()
-        end_date = self.education_fields["End Date"].get()
-        additional_info = self.education_fields["Additional Info"].get()
-        if degree and institution and start_date and end_date:
-            self.person.add_education(degree, institution, start_date, end_date, major, minor, additional_info)
-            for field in self.education_fields.values():
-                field.set("")
+        education_data = {field: var.get() for field, var in self.education_fields.items()}
+        self.person.add_education(**education_data)
+        messagebox.showinfo("Success", "Education added successfully.")
 
     def add_certification(self):
-        name = self.certification_fields["Name"].get()
-        issuing_org = self.certification_fields["Issuing Organization"].get()
-        issue_date = self.certification_fields["Issue Date"].get()
-        expiration_date = self.certification_fields["Expiration Date"].get()
-        if name and issuing_org and issue_date:
-            self.person.add_certification(name, issuing_org, issue_date, expiration_date)
-            for field in self.certification_fields.values():
-                field.set("")
+        certification_data = {field: var.get() for field, var in self.certification_fields.items()}
+        self.person.add_certification(**certification_data)
+        messagebox.showinfo("Success", "Certification added successfully.")
 
     def add_project(self):
-        title = self.project_fields["Title"].get()
-        description = self.project_fields["Description"].get()
-        technologies = self.project_fields["Technologies"].get()
-        start_date = self.project_fields["Start Date"].get()
-        end_date = self.project_fields["End Date"].get()
-        if title and description and technologies and start_date and end_date:
-            self.person.add_project(title, description, technologies, start_date, end_date)
-            for field in self.project_fields.values():
-                field.set("")
+        project_data = {field: var.get() for field, var in self.project_fields.items()}
+        self.person.add_project(**project_data)
+        messagebox.showinfo("Success", "Project added successfully.")
 
     def add_award(self):
-        name = self.award_fields["Name"].get()
-        description = self.award_fields["Description"].get()
-        date = self.award_fields["Date"].get()
-        if name and description and date:
-            self.person.add_award(name, description, date)
-            for field in self.award_fields.values():
-                field.set("")
+        award_data = {field: var.get() for field, var in self.award_fields.items()}
+        self.person.add_award(**award_data)
+        messagebox.showinfo("Success", "Award added successfully.")
 
     def add_publication(self):
-        title = self.publication_fields["Title"].get()
-        journal = self.publication_fields["Journal"].get()
-        date = self.publication_fields["Date"].get()
-        description = self.publication_fields["Description"].get()
-        if title and journal and date and description:
-            self.person.add_publication(title, journal, date, description)
-            for field in self.publication_fields.values():
-                field.set("")
+        publication_data = {field: var.get() for field, var in self.publication_fields.items()}
+        self.person.add_publication(**publication_data)
+        messagebox.showinfo("Success", "Publication added successfully.")
 
     def add_volunteer_experience(self):
-        role = self.volunteer_fields["Role"].get()
-        organization = self.volunteer_fields["Organization"].get()
-        start_date = self.volunteer_fields["Start Date"].get()
-        end_date = self.volunteer_fields["End Date"].get()
-        description = self.volunteer_fields["Description"].get()
-        if role and organization and start_date and end_date and description:
-            self.person.add_volunteer_experience(role, organization, start_date, end_date, description)
-            for field in self.volunteer_fields.values():
-                field.set("")
+        volunteer_data = {field: var.get() for field, var in self.volunteer_fields.items()}
+        self.person.add_volunteer_experience(**volunteer_data)
+        messagebox.showinfo("Success", "Volunteer experience added successfully.")
 
     def add_job(self):
-        title = self.job_fields["Title"].get()
-        company = self.job_fields["Company"].get()
-        start_date = self.job_fields["Start Date"].get()
-        end_date = self.job_fields["End Date"].get()
-        description = self.job_fields["Description"].get()
-        if title and company and start_date and end_date and description:
-            self.person.add_experience(title, company, start_date, end_date, description)
-            for field in self.job_fields.values():
-                field.set("")
+        job_data = {field: var.get() for field, var in self.job_fields.items()}
+        self.person.add_job(**job_data)
+        messagebox.showinfo("Success", "Job added successfully.")
 
     def add_language(self):
-        name = self.language_fields["Name"].get()
-        proficiency = self.language_fields["Proficiency"].get()
-        if name and proficiency:
-            self.person.add_language(name, proficiency)
-            for field in self.language_fields.values():
-                field.set("")
+        language_data = {field: var.get() for field, var in self.language_fields.items()}
+        self.person.add_language(**language_data)
+        messagebox.showinfo("Success", "Language added successfully.")
 
     def save_resume(self):
-        filename = filedialog.asksaveasfilename(defaultextension=".json", filetypes=[("JSON files", "*.json")])
-        if filename:
-            self.person.save_to_json(filename)
-            messagebox.showinfo("Success", "Resume saved successfully!")
+        file_path = filedialog.asksaveasfilename(defaultextension=".json", filetypes=[("JSON files", "*.json")])
+        if file_path:
+            self.person.save_to_file(file_path)
+            messagebox.showinfo("Success", "Resume saved successfully.")
 
     def load_resume(self):
-        filename = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
-        if filename:
-            self.person = resume_util.Person.load_from_json(filename)
-            messagebox.showinfo("Success", "Resume loaded successfully!")
+        file_path = filedialog.askopenfilename(filetypes=[("JSON files", "*.json")])
+        if file_path:
+            self.person.load_from_file(file_path)
+            self.update_ui_from_person()
+            messagebox.showinfo("Success", "Resume loaded successfully.")
+
+    def update_ui_from_person(self):
+        for field, var in self.contact_fields.items():
+            var.set(self.person.contact_info.get(field, ""))
+
+        # Clear the skills listbox
+        self.skills_listbox.delete(0, tk.END)
+        for skill in self.person.skills:
+            skill_type = 'Hard' if skill.is_hard else 'Soft'
+            self.skills_listbox.insert(tk.END, f"{skill.name} ({skill_type})")
 
     def convert_to_pdf(self):
-        filename = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF files", "*.pdf")])
-        if filename:
-            pdf_generator = PDFGenerator(self.person, filename)
-            pdf_generator.generate_pdf()
-            messagebox.showinfo("Success", "Resume converted to PDF successfully!")
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = ResumeBuilderUI(root)
-    root.mainloop()
+        file_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF files", "*.pdf")])
+        if file_path:
+            pdf_gen = PDFGenerator(self.person, file_path)
+            pdf_gen.generate_pdf()
+            messagebox.showinfo("Success", "PDF generated successfully.")

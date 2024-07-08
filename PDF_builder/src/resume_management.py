@@ -1,5 +1,3 @@
-# resume_management.py
-
 import json
 import resume_util  # Import the resume_util module for ResumeManager
 

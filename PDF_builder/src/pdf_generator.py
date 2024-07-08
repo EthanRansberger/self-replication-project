@@ -103,27 +103,10 @@ class PDFGenerator:
             pdf.cell(200, 10, txt="Publications", ln=True)
             pdf.set_font("Arial", size=12)
             for pub in self.person.publications:
-                pdf.cell(200, 10, txt=f"{pub.title} in {pub.journal} ({pub.date})", ln=True)
-                pdf.multi_cell(0, 10, txt=pub.description)
-            pdf.ln(10)
-
-        # Volunteer Experiences
-        if self.person.volunteer_experiences:
-            pdf.set_font("Arial", style='B', size=12)
-            pdf.cell(200, 10, txt="Volunteer Experiences", ln=True)
-            pdf.set_font("Arial", size=12)
-            for vol in self.person.volunteer_experiences:
-                pdf.cell(200, 10, txt=f"{vol.role} at {vol.organization} ({vol.start_date} to {vol.end_date})", ln=True)
-                pdf.multi_cell(0, 10, txt=vol.description)
-            pdf.ln(10)
-
-        # Languages
-        if self.person.languages:
-            pdf.set_font("Arial", style='B', size=12)
-            pdf.cell(200, 10, txt="Languages", ln=True)
-            pdf.set_font("Arial", size=12)
-            for lang in self.person.languages:
-                pdf.cell(200, 10, txt=f"{lang.name}: {lang.proficiency}", ln=True)
+                pub_text = f"{pub.title}, {pub.journal} (Published: {pub.date})"
+                pdf.cell(200, 10, txt=pub_text, ln=True)
+                if pub.link:
+                    pdf.cell(200, 10, txt=f"Link: {pub.link}", ln=True)
             pdf.ln(10)
 
         pdf.output(self.file_path)
