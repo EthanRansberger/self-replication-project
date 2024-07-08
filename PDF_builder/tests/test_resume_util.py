@@ -1,7 +1,7 @@
-# tests/test_resume_util.py
+# PDF_builder/tests/test_resume_util.py
 
 import unittest
-from resume_util import Skill, Experience, Education, Certification, Person
+from PDF_builder.src.resume_util import Skill, Experience, Education, Certification, Person
 
 class TestResumeUtil(unittest.TestCase):
 
