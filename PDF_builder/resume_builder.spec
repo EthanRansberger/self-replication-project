@@ -5,8 +5,8 @@
 block_cipher = None
 
 a = Analysis(
-    ['app.py'],  # Make sure this is the entry point of your application
-    pathex=['.'],  # Path to search for imports
+    ['src/app.py'],  # Make sure this is the entry point of your application
+    pathex=['src'],  # Path to search for imports
     binaries=[],
     datas=[('assets/icons/icon.ico', 'icon.ico')],  # Include any necessary files
     hiddenimports=[],

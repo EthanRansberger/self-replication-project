@@ -3,7 +3,7 @@ name: Build and Release
 on:
   push:
     branches:
-      - main
+      - '**'  # This ensures the workflow runs on all branches
 
 jobs:
   build:
@@ -38,6 +38,7 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/main'  # Avoid running on the main branch
     permissions:
       contents: write
     steps:
@@ -50,12 +51,13 @@ jobs:
         name: resume-builder-executable
         path: ./dist
 
-    - name: Create GitHub Release
+    - name: Create GitHub Pre-Release
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: 'v0.0.3'
-        name: Release 0.0.3
+        tag_name: '${{ github.ref_name }}-pre'  # Use current branch name for pre-release tag
+        name: 'Pre-Release ${{ github.ref_name }}'
         files: ./dist/resume_builder/resume_builder  # Adjust if necessary
+        prerelease: true  # Mark as pre-release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
